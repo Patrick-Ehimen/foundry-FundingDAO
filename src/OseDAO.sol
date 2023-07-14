@@ -10,7 +10,7 @@ contract OseDAO is ReentrancyGuard, AccessControl {
     bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
 
     uint constant votingPeriod = 5 days;
-    uint public proposalCount;
+    uint public proposalsCount;
 
     struct Proposal {
         uint256 id;
@@ -19,7 +19,7 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         uint256 voteInFavour;
         uint256 voteAgainst;
         string title;
-        string desciption;
+        string description;
         bool isCompleted;
         bool paid;
         bool isPaid;
@@ -70,5 +70,13 @@ contract OseDAO is ReentrancyGuard, AccessControl {
             msg.value == 5e18,
             "You need to add 5 MATIC to create a proposal"
         );
+        uint256 proposalId = proposalsCount;
+        Proposal storage proposal = proposals[proposalId];
+        proposal.id = proposalId;
+        proposal.description = desc;
+        proposal.title = title;
+        proposal.receiverAddress = payable(receiverAddress);
+        proposal.proposer = payable(msg.sender);
+        proposal.amount = amount;
     }
 }
