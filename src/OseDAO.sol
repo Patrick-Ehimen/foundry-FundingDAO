@@ -78,5 +78,11 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         proposal.receiverAddress = payable(receiverAddress);
         proposal.proposer = payable(msg.sender);
         proposal.amount = amount;
+        proposal.livePeriod = block.timestamp + votingPeriod;
+        proposal.isPaid = false;
+        proposal.isCompleted = false;
+        proposal.imageId = imageId;
+        proposalsCount++;
+        emit NewProposal(msg.sender, amount);
     }
 }
