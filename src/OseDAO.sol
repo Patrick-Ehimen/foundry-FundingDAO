@@ -85,4 +85,12 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         proposalsCount++;
         emit NewProposal(msg.sender, amount);
     }
+
+    function getAllProposals() public view returns (Proposal[] memory) {
+        Proposal[] memory temProposals = new Proposal[](proposalsCount);
+        for (uint256 i = 0; i < proposalsCount; i++) {
+            temProposals[i] = proposals[i];
+        }
+        return temProposals;
+    }
 }
