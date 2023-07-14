@@ -93,4 +93,13 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         }
         return temProposals;
     }
+
+    function getProposal(uint256 proposalId)public view returns (Proposal memory){
+        return proposals[proposalId];
+    }
+
+
+    function getVotes()public view onlyStakeholder ("nly Stakeholder can call this function.")returns (uint256[] memory){
+       return votes[msg.sender];
+    }
 }
