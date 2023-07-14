@@ -24,5 +24,15 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         bool paid;
         bool isPaid;
         address payable receiverAddress;
+        address proposer;
+        uint256 totalFundRaised;
+        Funding[] funders;
+        string imageId;
+    }
+
+    struct Funding {
+        address payer;
+        uint amount;
+        uint timeStamp;
     }
 }
