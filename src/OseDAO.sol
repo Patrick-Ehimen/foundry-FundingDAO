@@ -48,4 +48,27 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         address indexed projectAddress,
         uint256 amount
     );
+
+    modifier onlyMember(string memory message) {
+        require(hasRole(MEMBER, msg.sender), message);
+        _;
+    }
+
+    modifier onlyStakeholder(string memory message) {
+        require(hasRole(STAKEHOLDER, msg.sender), message);
+        _;
+    }
+
+    function createProposal(
+        string calldata title,
+        string calldata desc,
+        address receiverAddress,
+        uint256 amount,
+        string calldata imageId
+    ) public payable onlyMember("Only members can create new proposal.") {
+        require(
+            msg.value == 5e18,
+            "You need to add 5 MATIC to create a proposal"
+        );
+    }
 }
