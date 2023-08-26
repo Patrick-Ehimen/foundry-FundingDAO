@@ -57,9 +57,13 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         uint timeStamp; // Timestamp of the contribution
     }
 
+    // Mapping of proposal ID to Proposal struct
     mapping(uint256 => Proposal) private proposals;
+    // Mapping of stakeholder address to stakeholder balance
     mapping(address => uint256) private stakeHolders;
+    // Mapping of member address to member balance
     mapping(address => uint256) private members;
+    // Mapping of address to array of votes
     mapping(address => uint256[]) private votes;
 
     event NewMember(address indexed fromAddress, uint256 amount);
