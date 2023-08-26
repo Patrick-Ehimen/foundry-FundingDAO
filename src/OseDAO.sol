@@ -12,6 +12,24 @@ contract OseDAO is ReentrancyGuard, AccessControl {
     uint constant votingPeriod = 5 days;
     uint public proposalsCount;
 
+    /**
+     * @dev Represents a proposal in the OseDAO.
+     * @param id ID of the proposal
+     * @param amount Amount of funds requested
+     * @param livePeriod Duration of the proposal
+     * @param voteInFavour Number of votes in favor of the proposal
+     * @param voteAgainst Number of votes against the proposal
+     * @param title Title of the proposal
+     * @param description Description of the proposal
+     * @param isCompleted Flag indicating if the proposal is completed
+     * @param paid Flag indicating if the proposal is paid
+     * @param isPaid Flag indicating if the proposal is paid
+     * @param receiverAddress Address of the receiver of funds
+     * @param proposer Address of the proposer
+     * @param totalFundRaised Total funds raised for the proposal
+     * @param funders Array of funders for the proposal
+     * @param imageId ID of the image associated with the proposal
+     */
     struct Proposal {
         uint256 id;
         uint256 amount;
@@ -30,10 +48,13 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         string imageId;
     }
 
+    /**
+     * @dev Represents a funding for a proposal.
+     */
     struct Funding {
-        address payer;
-        uint amount;
-        uint timeStamp;
+        address payer; // Address of the payer
+        uint amount; // Amount of funds contributed
+        uint timeStamp; // Timestamp of the contribution
     }
 
     mapping(uint256 => Proposal) private proposals;
@@ -131,5 +152,7 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         return stakeHolders[msg.sender] > 0;
     }
 
-    function isMember()
+    function isMember() public view returns (bool) {
+        return members[msg.sender] > 0;
+    }
 }
