@@ -131,6 +131,11 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         return temProposals;
     }
 
+    /**
+     * @dev Retrieves a specific proposal in the OseDAO.
+     * @param proposalId ID of the proposal to retrieve
+     * @return The Proposal struct representing the specified proposal
+     */
     function getProposal(
         uint256 proposalId
     ) public view returns (Proposal memory) {
