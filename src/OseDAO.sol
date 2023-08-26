@@ -14,38 +14,23 @@ contract OseDAO is ReentrancyGuard, AccessControl {
 
     /**
      * @dev Represents a proposal in the OseDAO.
-     * @param id ID of the proposal
-     * @param amount Amount of funds requested
-     * @param livePeriod Duration of the proposal
-     * @param voteInFavour Number of votes in favor of the proposal
-     * @param voteAgainst Number of votes against the proposal
-     * @param title Title of the proposal
-     * @param description Description of the proposal
-     * @param isCompleted Flag indicating if the proposal is completed
-     * @param paid Flag indicating if the proposal is paid
-     * @param isPaid Flag indicating if the proposal is paid
-     * @param receiverAddress Address of the receiver of funds
-     * @param proposer Address of the proposer
-     * @param totalFundRaised Total funds raised for the proposal
-     * @param funders Array of funders for the proposal
-     * @param imageId ID of the image associated with the proposal
      */
     struct Proposal {
-        uint256 id;
-        uint256 amount;
-        uint256 livePeriod;
-        uint256 voteInFavour;
-        uint256 voteAgainst;
-        string title;
-        string description;
-        bool isCompleted;
-        bool paid;
-        bool isPaid;
-        address payable receiverAddress;
-        address proposer;
-        uint256 totalFundRaised;
-        Funding[] funders;
-        string imageId;
+        uint256 id; //ID of the proposal
+        uint256 amount; //amount of funds requested
+        uint256 livePeriod; //duration of the proposal
+        uint256 voteInFavour; //number of votes in favor of the proposal
+        uint256 voteAgainst; //number of votes against the proposal
+        string title; //title of the proposal
+        string description; //description of the proposal
+        bool isCompleted; //Indicates whether the proposal is completed
+        bool paid; //Indicates whether the proposal is paid
+        bool isPaid; //Indicates whether the proposal is paid
+        address payable receiverAddress; //Address of the receiver of funds for the proposal
+        address proposer; //Address of the proposer of the proposal
+        uint256 totalFundRaised; //total funds raised for the proposal
+        Funding[] funders; //Array of funders who contributed to the proposal
+        string imageId; //ID of the image associated with the proposal
     }
 
     /**
@@ -92,6 +77,14 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         _;
     }
 
+    /**
+     * @dev Creates a new proposal in the OseDAO.
+     * @param title Title of the proposal
+     * @param desc Description of the proposal
+     * @param receiverAddress Address of the receiver of funds
+     * @param amount Amount of funds requested
+     * @param imageId ID of the image associated with the proposal
+     */
     function createProposal(
         string calldata title,
         string calldata desc,
@@ -142,15 +135,23 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         return proposals[proposalId];
     }
 
+    /**
+     * @dev Retrieves the votes of the caller who is a stakeholder.
+     * @return An array of vote IDs representing the votes of the caller who is a stakeholder
+     */
     function getVotes()
         public
         view
-        onlyStakeholder("nly Stakeholder can call this function.")
+        onlyStakeholder("Only Stakeholder can call this function.")
         returns (uint256[] memory)
     {
         return votes[msg.sender];
     }
 
+    /**
+     * @dev Retrieves the balance of the caller who is a stakeholder.
+     * @return The balance of the caller who is a stakeholder
+     */
     function getStakeholderBal()
         public
         view
@@ -160,6 +161,10 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         return stakeHolders[msg.sender];
     }
 
+    /**
+     * @dev Retrieves the balance of the caller who is a member.
+     * @return The balance of the caller who is a member
+     */
     function getMemberBal()
         public
         view
@@ -169,10 +174,18 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         return members[msg.sender];
     }
 
+    /**
+     * @dev Checks if the caller is a stakeholder.
+     * @return True if the caller is a stakeholder, false otherwise
+     */
     function isStakeHolder() public view returns (bool) {
         return stakeHolders[msg.sender] > 0;
     }
 
+    /**
+     * @dev Checks if the caller is a member.
+     * @return True if the caller is a member, false otherwise
+     */
     function isMember() public view returns (bool) {
         return members[msg.sender] > 0;
     }
