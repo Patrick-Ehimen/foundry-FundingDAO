@@ -6,10 +6,13 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract OseDAO is ReentrancyGuard, AccessControl {
+    // Define role constants for member and stakeholder
     bytes32 public constant MEMBER = keccak256("MEMBER");
     bytes32 public constant STAKEHOLDER = keccak256("STAKEHOLDER");
 
+    // Define the duration of the voting period
     uint constant votingPeriod = 5 days;
+    // Keep track of the number of proposals
     uint public proposalsCount;
 
     /**
@@ -188,5 +191,36 @@ contract OseDAO is ReentrancyGuard, AccessControl {
      */
     function isMember() public view returns (bool) {
         return members[msg.sender] > 0;
+    }
+
+    /**
+     * @dev Allows a stakeholder to vote on a proposal.
+     * @param proposalId ID of the proposal to vote on
+     * @param inFavour Boolean indicating whether the vote is in favour or against the proposal
+     */
+    function vote(
+        uint256 proposalId,
+        bool inFavour
+    ) public onlyStakeholder("Only Stakeholders can vote on a proposal.") {
+        Proposal storage proposal = proposals[proposalId];
+
+        // Check if the proposal is completed or the live period has ended
+        if (proposal.isCompleted || proposal.livePeriod <= block.timestamp) {
+            proposal.isCompleted = true;
+            revert("Time period of this proposal is ended.");
+        }
+
+        // Check if the stakeholder has already voted on this proposal
+        for (uint256 i = 0; i < votes[msg.sender].length; i++) {
+            if (proposal.id == votes[msg.sender][i])
+                revert("You can only vote once.");
+        }
+
+        // Increment the vote count based on the vote type
+        if (inFavour) proposal.voteInFavour++;
+        else proposal.voteAgainst++;
+
+        // Add the proposal ID to the stakeholder's votes
+        votes[msg.sender].push(proposalId);
     }
 }
