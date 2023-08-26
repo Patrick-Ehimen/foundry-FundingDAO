@@ -74,11 +74,19 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         uint256 amount
     );
 
+    /**
+     * @dev Modifier to check if the caller is a member.
+     * @param message Error message to display if the caller is not a member
+     */
     modifier onlyMember(string memory message) {
         require(hasRole(MEMBER, msg.sender), message);
         _;
     }
 
+    /**
+     * @dev Modifier to check if the caller is a stakeholder.
+     * @param message Error message to display if the caller is not a stakeholder
+     */
     modifier onlyStakeholder(string memory message) {
         require(hasRole(STAKEHOLDER, msg.sender), message);
         _;
@@ -111,6 +119,10 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         emit NewProposal(msg.sender, amount);
     }
 
+    /**
+     * @dev Retrieves all proposals in the OseDAO.
+     * @return An array of Proposal structs representing all proposals
+     */
     function getAllProposals() public view returns (Proposal[] memory) {
         Proposal[] memory temProposals = new Proposal[](proposalsCount);
         for (uint256 i = 0; i < proposalsCount; i++) {
