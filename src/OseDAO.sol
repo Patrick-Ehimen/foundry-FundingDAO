@@ -126,4 +126,10 @@ contract OseDAO is ReentrancyGuard, AccessControl {
     {
         return members[msg.sender];
     }
+
+    function isStakeHolder() public view returns (bool) {
+        return stakeHolders[msg.sender] > 0;
+    }
+
+    function isMember()
 }
