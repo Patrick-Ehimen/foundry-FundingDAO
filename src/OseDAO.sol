@@ -288,8 +288,10 @@ contract OseDAO is ReentrancyGuard, AccessControl {
      */
     function createStakeholder() public payable {
         uint256 amount = msg.value;
+        // Check if the sender is not already a stakeholder
         if (!hasRole(STAKEHOLDER, msg.sender)) {
             uint256 total = members[msg.sender] + amount;
+            // Check if the total stake (including the deposited funds) is equal to or greater than 2 ether
             if (total >= 2 ether) {
                 _setupRole(STAKEHOLDER, msg.sender);
                 _setupRole(MEMBER, msg.sender);
