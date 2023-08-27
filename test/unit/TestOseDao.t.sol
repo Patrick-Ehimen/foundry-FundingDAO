@@ -2,4 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {OseDAO} from "./";
+import {OseDAO} from "../../src/OseDAO.sol";
+import {Test, console} from "forge-std/Test.sol";
+
+contract TestOseDao is Test {}
