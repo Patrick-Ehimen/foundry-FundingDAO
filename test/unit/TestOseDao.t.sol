@@ -52,6 +52,25 @@ contract TestOseDao is Test {
         vm.stopPrank();
     }
 
+    function testCreateStakeHolder() public payable {
+        uint256 amount = msg.value;
+
+        vm.startPrank(nonMember);
+        oseDaoContract.createStakeholderAndMember{value: amount}();
+        assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
+
+        if (amount >= 2 ether) {
+            assertTrue(
+                oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
+            );
+        } else {
+            assertFalse(
+                oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
+            );
+        }
+        vm.stopPrank();
+    }
+
     function testCreateStakeHolderAndMemberGreaterLessThan2Ether() public {
         // Deposit less than 2 ETH
         vm.startPrank(nonMember);
