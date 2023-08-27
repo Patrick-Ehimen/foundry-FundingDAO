@@ -223,4 +223,14 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         // Add the proposal ID to the stakeholder's votes
         votes[msg.sender].push(proposalId);
     }
+
+    function providefunds(
+        uint256 proposalId,
+        uint256 fundAmount
+    ) public payable onlyStakeholder("Only stkeholders can mae payments") {
+        Proposal storage proposal = proposals[proposalId];
+
+        if(proposal.isPaid) revert('required funds are provided');
+        if(proposal.voteInFavour <= proposal.voteAgainst)
+    }
 }
