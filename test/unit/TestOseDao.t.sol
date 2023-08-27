@@ -17,6 +17,8 @@ contract TestOseDao is Test {
 
     uint public constant STARTING_BALANCE = 10 ether;
     uint public constant STARTING_DAO_BALANCE = 1000 ether;
+    uint public constant MIN_DEPOSIT_VALUE = 1 ether;
+    uint public constant DEPOSIT_VALUE = 2 ether;
 
     function setUp() public {
         vm.startPrank(owner);
@@ -35,13 +37,27 @@ contract TestOseDao is Test {
     function testCreateStakeHolderAndMember() public {
         //Deposit greater than 2 ETH
         vm.prank(nonMember);
-        oseDaoContract.createStakeholderAndMember{value: 2 ether}();
+        oseDaoContract.createStakeholderAndMember{value: DEPOSIT_VALUE}();
 
         assertTrue(
             oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
         );
         assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
-        assertEq(oseDaoContract.getStakeholderBal(), )
+
+        assertEq(oseDaoContract.getStakeholderBal(), DEPOSIT_VALUE);
+        assertEq(oseDaoContract.getMemberBal(), DEPOSIT_VALUE);
+
+        // Deposit less than 2 ETH
+        vm.prank(nonMember);
+        oseDaoContract.createStakeholderAndMember{value: MIN_DEPOSIT_VALUE}();
+
+        assertTrue(
+            oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
+        );
+        assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
+
+        // assertEq(oseDaoContract.getStakeholderBal(), MIN_DEPOSIT_VALUE);
+        assertEq(oseDaoContract.getMemberBal(), MIN_DEPOSIT_VALUE);
     }
 
     // function testCreateProposal() public {
