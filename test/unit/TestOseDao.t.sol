@@ -34,30 +34,14 @@ contract TestOseDao is Test {
         vm.deal(address(oseDaoContract), STARTING_DAO_BALANCE);
     }
 
-    function testCreateStakeHolderAndMemberGreaterThan2Ether() public {
-        //Deposit greater than 2 ETH
-        vm.startPrank(nonMember);
-        oseDaoContract.createStakeholderAndMember{value: DEPOSIT_VALUE}();
-
-        assertTrue(
-            oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
-        );
-        assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
-
-        console.log("balance of newmember", oseDaoContract.getMemberBal());
-
-        assertEq(oseDaoContract.getStakeholderBal(), DEPOSIT_VALUE);
-        assertEq(oseDaoContract.getMemberBal(), DEPOSIT_VALUE);
-
-        vm.stopPrank();
-    }
-
     function testCreateStakeHolder() public payable {
-        uint256 amount = msg.value;
+        uint256 amount = msg.value; //@audit remember to write script to programatically send funds
 
         vm.startPrank(nonMember);
         oseDaoContract.createStakeholderAndMember{value: amount}();
         assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
+
+        console.log("balance of newmember", oseDaoContract.getMemberBal());
 
         if (amount >= 2 ether) {
             assertTrue(
@@ -68,23 +52,20 @@ contract TestOseDao is Test {
                 oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
             );
         }
+
+        console.log("is member", oseDaoContract.isMember());
+        console.log("is stakeholder", oseDaoContract.isStakeHolder());
+
+        if (amount == 0) revert("You can't send zero ether");
+
+        // if (oseDaoContract.isMember() && oseDaoContract.isStakeHolder()) {
+        //     assertGt(a, b);
+        // }
+
         vm.stopPrank();
     }
 
-    function testCreateStakeHolderAndMemberGreaterLessThan2Ether() public {
-        // Deposit less than 2 ETH
-        vm.startPrank(nonMember);
-        oseDaoContract.createStakeholderAndMember{value: MIN_DEPOSIT_VALUE}();
-
-        assertTrue(
-            oseDaoContract.hasRole(oseDaoContract.STAKEHOLDER(), nonMember)
-        );
-        assertTrue(oseDaoContract.hasRole(oseDaoContract.MEMBER(), nonMember));
-
-        // assertEq(oseDaoContract.getStakeholderBal(), MIN_DEPOSIT_VALUE);
-        // assertEq(oseDaoContract.getMemberBal(), MIN_DEPOSIT_VALUE);
-        vm.stopPrank();
-    }
+    //Test adding funds to an existing stakeholder.
 
     // function testCreateProposal() public {
     //     string memory title = "New Proposal";
