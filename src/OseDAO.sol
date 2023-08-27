@@ -1,10 +1,19 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.19;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+// SPDX-License-Identifier: MIT
+
+pragma solidity 0.8.19;
+
+/**
+ * @title OseDAO
+ * @dev OseDAO is a decentralized autonomous organization that allows members to create and vote on proposals.
+ * @author [Ose]
+ */
 contract OseDAO is ReentrancyGuard, AccessControl {
     // Define role constants for member and stakeholder
     bytes32 public constant MEMBER = keccak256("MEMBER");
