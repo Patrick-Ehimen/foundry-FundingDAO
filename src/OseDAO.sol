@@ -293,7 +293,7 @@ contract OseDAO is ReentrancyGuard, AccessControl {
      * @notice If the user is already a stakeholder, the deposited funds will be added to their existing stake.
      * @notice If the user's total stake (including the deposited funds) is equal to or greater than 2 ether, they will also become a member.
      */
-    function createStakeholder() public payable {
+    function createStakeholderAndMember() public payable {
         uint256 amount = msg.value;
         // Check if the sender is not already a stakeholder
         if (!hasRole(STAKEHOLDER, msg.sender)) {
