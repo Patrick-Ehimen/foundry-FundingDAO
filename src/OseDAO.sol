@@ -224,25 +224,44 @@ contract OseDAO is ReentrancyGuard, AccessControl {
         votes[msg.sender].push(proposalId);
     }
 
+    /**
+     * @dev Provides funds for a proposal.
+     * @param proposalId ID of the proposal to provide funds for
+     * @param fundAmount Amount of funds to provide
+     */
     function providefunds(
         uint256 proposalId,
         uint256 fundAmount
-    ) public payable onlyStakeholder("Only stkeholders can mae payments") {
+    ) public payable onlyStakeholder("Only stakeholders can make payments") {
         Proposal storage proposal = proposals[proposalId];
 
-        if (proposal.isPaid) revert("required funds are provided");
+        // Check if the proposal has already been paid
+        if (proposal.isPaid) revert("Required funds are already provided");
+
+        // Check if the proposal has enough votes in favor
         if (proposal.voteInFavour <= proposal.voteAgainst)
             revert("This proposal is not selected for funding.");
-        if (proposal.totalFundRaised >= proposal.amount)
-            revert("Required funds are provided.");
 
+        // Check if the required funds have already been provided
+        if (proposal.totalFundRaised >= proposal.amount)
+            revert("Required funds are already provided.");
+
+        // Add the provided funds to the total fund raised for the proposal
         proposal.totalFundRaised += fundAmount;
+
+        // Add the funder to the list of funders for the proposal
         proposal.funders.push(Funding(msg.sender, fundAmount, block.timestamp));
+
+        // Check if the total fund raised is equal to or greater than the required amount
         if (proposal.totalFundRaised >= proposal.amount) {
             proposal.isCompleted = true;
         }
     }
 
+    /**
+     * @dev Releases funding for a proposal.
+     * @param proposalId ID of the proposal to release funds for
+     */
     function releaseFunding(
         uint256 proposalId
     )
@@ -252,11 +271,37 @@ contract OseDAO is ReentrancyGuard, AccessControl {
     {
         Proposal storage proposal = proposals[proposalId];
 
+        // Check if the required funds have been met
         if (proposal.totalFundRaised <= proposal.amount) {
-            revert("Required funds are not met. Please provider funds.");
+            revert("Required funds are not met. Please provide funds.");
         }
         proposal.receiverAddress.transfer(proposal.totalFundRaised);
         proposal.isPaid = true;
         proposal.isCompleted = true;
+    }
+
+    /**
+     * @dev Creates a new stakeholder in the OseDAO.
+     * @notice This function allows a user to become a stakeholder by depositing a certain amount of funds.
+     * @notice If the user is already a stakeholder, the deposited funds will be added to their existing stake.
+     * @notice If the user's total stake (including the deposited funds) is equal to or greater than 2 ether, they will also become a member.
+     */
+    function createStakeholder() public payable {
+        uint256 amount = msg.value;
+        if (!hasRole(STAKEHOLDER, msg.sender)) {
+            uint256 total = members[msg.sender] + amount;
+            if (total >= 2 ether) {
+                _setupRole(STAKEHOLDER, msg.sender);
+                _setupRole(MEMBER, msg.sender);
+                stakeHolders[msg.sender] = total;
+                members[msg.sender] += amount;
+            } else {
+                _setupRole(MEMBER, msg.sender);
+                members[msg.sender] += amount;
+            }
+        } else {
+            members[msg.sender] += amount;
+            stakeHolders[msg.sender] += amount;
+        }
     }
 }
