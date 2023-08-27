@@ -230,7 +230,16 @@ contract OseDAO is ReentrancyGuard, AccessControl {
     ) public payable onlyStakeholder("Only stkeholders can mae payments") {
         Proposal storage proposal = proposals[proposalId];
 
-        if(proposal.isPaid) revert('required funds are provided');
-        if(proposal.voteInFavour <= proposal.voteAgainst)
+        if (proposal.isPaid) revert("required funds are provided");
+        if (proposal.voteInFavour <= proposal.voteAgainst)
+            revert("This proposal is not selected for funding.");
+        if (proposal.totalFundRaised >= proposal.amount)
+            revert("Required funds are provided.");
+
+        proposal.totalFundRaised += fundAmount;
+        proposal.funders.push(Funding(msg.sender, fundAmount, block.timestamp));
+        if (proposal.totalFundRaised >= proposal.amount) {
+            proposal.isCompleted = true;
+        }
     }
 }
