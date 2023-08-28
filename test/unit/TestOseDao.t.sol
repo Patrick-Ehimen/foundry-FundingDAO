@@ -34,8 +34,17 @@ contract TestOseDao is Test {
         vm.deal(address(oseDaoContract), STARTING_DAO_BALANCE);
     }
 
+    /**
+     * @dev Test creating a new stakeholder.
+     * This function tests the creation of a new stakeholder and member by sending funds to the contract.
+     * It verifies that the stakeholder and member roles are assigned correctly.
+     * It also checks if the amount sent is greater than or equal to 2 ether, the stakeholder role is assigned.
+     * @notice Remember to write a script to programmatically send funds.
+     */
     function testCreateStakeHolder() public payable {
-        uint256 amount = msg.value; //@audit remember to write script to programatically send funds
+        // uint256 amount = msg.value; //@audit remember to write script to programatically send funds
+
+        uint256 amount = 2 ether;
 
         vm.startPrank(nonMember);
         oseDaoContract.createStakeholderAndMember{value: amount}();
@@ -65,8 +74,6 @@ contract TestOseDao is Test {
         vm.stopPrank();
     }
 
-    //Test adding funds to an existing stakeholder.
-
     // function testCreateProposal() public {
     //     string memory title = "New Proposal";
     //     string memory desc = "This is a new proposal";
@@ -74,4 +81,25 @@ contract TestOseDao is Test {
     //     uint256 amount = 100;
     //     string memory imageId = "123";
     // }
+
+    //Test balance retrieval for stakeholders and members.
+    function testRetrieveBalances() public {
+        vm.prank(nonMember);
+        testCreateStakeHolder();
+
+        // Add more funds
+
+        console.log(
+            "get stakeholder balance",
+            oseDaoContract.getStakeholderBal()
+        );
+
+        testCreateStakeHolder();
+        console.log(
+            "get stakeholder balance",
+            oseDaoContract.getStakeholderBal()
+        );
+    }
+
+    //Test adding funds to an existing stakeholder.
 }
