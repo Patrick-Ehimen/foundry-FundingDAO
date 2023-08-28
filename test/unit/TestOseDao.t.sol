@@ -74,6 +74,12 @@ contract TestOseDao is Test {
         vm.stopPrank();
     }
 
+    /**
+     * @dev Test creating a new proposal.
+     * This function tests the creation of a new proposal by a stakeholder.
+     * It verifies that the proposal details are correctly set.
+     * @notice Remember to write a script to programmatically send funds.
+     */
     function testCreateProposalproposal() public {
         vm.startPrank(nonMember);
 
